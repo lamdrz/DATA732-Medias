@@ -1,7 +1,6 @@
 import plotly.express as px
 import pandas as pd
-import json
-from dash import Dash, dcc, html, Input, Output
+from dash import dcc, html
 import pycountry
 import unicodedata
 
@@ -228,15 +227,13 @@ FR_TO_EN = {
     "Zimbabwe": "Zimbabwe",
 }
 
-# 1) Normalisation : accents, apostrophes, espaces, minuscule
-
 def normalize(s: str) -> str:
     if not isinstance(s, str):
         return ""
     s = unicodedata.normalize('NFD', s)
     s = ''.join(c for c in s if unicodedata.category(c) != 'Mn')  # enlever accents
-    s = s.replace("’", "'")  # apostrophe typographique → apostrophe normale
-    s = s.replace("-", " ")  # tiret → espace
+    s = s.replace("’", "'")  # apostrophe typographique -> apostrophe normale
+    s = s.replace("-", " ")  # tiret -> espace
     s= s.replace(" ", "")  # enlever espaces
     return s.strip()
 
@@ -246,8 +243,6 @@ def country_en(name):
         if normalize(fr) == norm_name or normalize(en) == norm_name:
             return en
     return None
-
-# 3) Conversion vers ISO-3 (FRA, USA…)
 
 def to_iso3(name: str) -> str | None:
     eng = country_en(name)
